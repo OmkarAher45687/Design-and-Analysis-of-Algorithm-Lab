@@ -1,0 +1,171 @@
+/*
+1. Make structure to store items.
+2. Main function takes input and display function.
+3. Sort items according to ratio and then sorting works.
+4. Fractional knapsack function.
+*/
+
+#include<iostream>
+using namespace std;
+
+struct item
+{
+	int id;
+	float weight;
+	float profit;
+	float ratio;
+};
+
+void display(int totalItem, struct item arr[])
+{
+	cout<<"\nID\tProfit\tWeight\tRatio(P/W)";
+	for(int i = 0; i < totalItem; i++)
+	{
+		cout<<"\n"<<arr[i].id<<"\t"<<arr[i].profit<<"\t"<<arr[i].weight<<"\t"<<arr[i].ratio;
+		cout<<"\n";
+	}
+}
+
+void sort(int totalItem, struct item arr[])
+{
+	int flag = 0;
+	for(int i = 0; i < totalItem -1; i++)
+	{
+		for(int j = 0; j < totalItem - i - 1; j++)
+		{
+			if(arr[j].ratio < arr[j + 1].ratio)
+			{
+				struct item temp;
+				temp = arr[j];
+				arr[j] = arr[j + 1];
+				arr[j + 1] = temp;
+				flag = 1;
+			}
+			if(flag == 0)
+				break;
+		} 
+	}
+}
+
+void fractionalKnapsack(int totalItem, struct item arr[], int knapSackWeight)
+{
+	float totalWeight = 0;
+	float totalProfit = 0;
+	
+	cout<<"\nID\tProfit\tWeight";
+	for(int i = 0; i < totalItem; i++)
+	{
+		if(totalWeight + arr[i].weight <= knapSackWeight)
+		{
+			totalWeight += arr[i].weight;
+			totalProfit += arr[i].profit;
+			
+			cout<<"\n"<<arr[i].id<<"\t"<<arr[i].profit<<"\t"<<arr[i].weight<<endl;
+			cout<<"\n";
+		}
+		else
+		{
+			float remainingWeight = knapSackWeight - totalWeight;
+			totalProfit += (arr[i].ratio * remainingWeight);
+		
+			cout<<"\n"<<arr[i].id<<"\t"<<(arr[i].ratio * remainingWeight)<<"\t"<<remainingWeight<<endl;
+			cout<<"\n";
+		
+		totalWeight = knapSackWeight;
+		break;
+		}
+	}
+	cout<<"\nTotal Weight in KnapSack: "<<totalWeight;
+	cout<<"\nTotal Profit: "<<totalProfit;
+}
+
+int main()
+{
+	int knapSackWeight, totalItem;
+	
+	cout<<"\nEnter max weight of Knapsack: ";
+	cin>>knapSackWeight;
+	
+	cout<<"\nEnter total no. of items in Knapsack: ";
+	cin>>totalItem;
+	
+	item arr[totalItem];
+	for(int i = 0; i < totalItem; i++)
+	{
+		arr[i].id = i + 1;
+		
+		cout<<"\nEnter Weight of Item "<<i + 1<<": ";
+		cin>>arr[i].weight;
+		
+		cout<<"\nEnter Profit of Item "<<i + 1<<": ";
+		cin>>arr[i].profit;
+		
+		arr[i].ratio = arr[i].profit / arr[i].weight;
+	}
+	
+	//DISPLAY FUNCTION
+	display(totalItem, arr);
+	sort(totalItem, arr);
+	
+	cout<<"\n*****************Sorted form Items according P / W ratio******************\n";
+	display(totalItem, arr);
+	
+	cout<<"\n*****************SOLVED PROBLEM OF FRACTIONAL KNAPSACK***************\n";
+	fractionalKnapsack(totalItem, arr, knapSackWeight);
+	
+	return 0;
+}
+
+
+/*
+OUTPUT:
+ubuntu@omkar:~$ g++ daa_pr1.cpp
+ubuntu@omkar:~$ ./a.out 
+
+Enter max weight of Knapsack: 50
+
+Enter total no. of items in Knapsack: 3
+
+Enter Weight of Item 1: 10
+
+Enter Profit of Item 1: 60
+
+Enter Weight of Item 2: 20
+
+Enter Profit of Item 2: 80
+
+Enter Weight of Item 3: 40
+
+Enter Profit of Item 3: 100
+
+ID	Profit	Weight	Ratio(P/W)
+1	60	10	6
+
+2	80	20	4
+
+3	100	40	2.5
+
+*****************Sorted form Items according P / W ratio******************
+
+ID	Profit	Weight	Ratio(P/W)
+1	60	10	6
+
+2	80	20	4
+
+3	100	40	2.5
+
+*****************SOLVED PROBLEM OF FRACTIONAL KNAPSACK***************
+
+ID	Profit	Weight
+1	60	10
+
+
+2	80	20
+
+
+3	50	20
+
+
+Total Weight in KnapSack: 50
+Total Profit: 190
+*/
