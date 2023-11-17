@@ -1,0 +1,137 @@
+/*
+1. Take input in main function in 2d array and display it.
+2. For bellman algo intialize dist, then apply bellman in that check for negative cycle.
+3. Show final distances.
+*/
+
+#include<iostream>
+using namespace std;
+
+int totalNodes, totalEdges; 
+int mat[3][20];
+int dist[20];
+int start;
+
+void display()
+{
+	cout<<"\n\tSOURCE\t\tDESTINATION\t\tWEIGHT\n";
+	for(int i = 0; i < totalEdges; i++)
+	{
+		cout<<"\n\t"<<mat[0][i]<<"\t\t"<<mat[1][i]<<"\t\t"<<mat[2][i];
+	}
+	cout<<endl;
+}
+
+void initializeDistance() 
+{
+	for (int i = 0; i < totalNodes; i++) 
+    	{
+            		dist[i] = 999;
+    	}
+    	dist[start] = 0;
+}
+
+void bellmanFord()
+{
+	initializeDistance();
+	for(int itr=0; itr<totalNodes-1; itr++)
+	{
+		for(int i = 0; i < totalEdges; i++)
+		{
+			int u = mat[0][i];
+            		int v = mat[1][i];
+            		int weight = mat[2][i];
+			if(dist[v] > dist[u] + weight)
+			{
+				dist[v] = dist[u] + weight;
+			}
+		}
+	}
+	
+	// Check for negative-weight cycles
+	for(int i = 0; i < totalEdges; i++)
+	{
+		int u = mat[0][i];
+            	int v = mat[1][i];
+            	int weight = mat[2][i];
+            	
+		if(dist[v] > dist[u] + weight && dist[u] != 999)
+		{
+			cout<<"\nNegative-weight cycle found!"<<endl;
+		}
+	}
+	
+	cout<<"\nThe final distances are.\n";
+	 for (int i = 0; i < totalNodes; i++) 
+	 {
+        		cout<<"\nDistance from " <<start<<" to "<<i<< " is "<<dist[i]<<endl;
+    	}
+}
+
+int main()
+{	
+	cout<<"\nEnter the number of nodes and edges: ";
+  	cin>>totalNodes>>totalEdges;
+
+    	cout<<"\nEnter the edges (source, destination, weight): ";
+    	for (int i = 0; i < totalEdges; i++) 
+    	{
+        		cin>>mat[0][i]>>mat[1][i]>>mat[2][i];
+    	}
+    	
+    	cout<<"\nEnter the starting / source node: ";
+    	cin>>start;
+    	
+    	display();
+    	bellmanFord();
+    	
+    	return 0;
+}
+/*
+OUTPUT:
+ubuntu@omkar:~$ g++ daa_pr3.cpp
+ubuntu@omkar:~$ ./a.out 
+
+Enter the number of nodes and edges: 6 10
+
+Enter the edges (source, destination, weight): 0 1 2 
+0 2 4
+1 2 -3
+1 3 1
+1 4 5
+2 3 -4
+2 4 -2
+3 5 8
+4 3 4
+4 5 6
+
+Enter the starting / source node: 0 
+
+SOURCE	DESTINATION		WEIGHT
+
+	0		1		2
+	0		2		4
+	1		2		-3
+	1		3		1
+	1		4		5
+	2		3		-4
+	2		4		-2
+	3		5		8
+	4		3		4
+	4		5		6
+
+The final distances are.
+
+Distance from 0 to 0 is 0
+
+Distance from 0 to 1 is 2
+
+Distance from 0 to 2 is -1
+
+Distance from 0 to 3 is -5
+
+Distance from 0 to 4 is -3
+
+Distance from 0 to 5 is 3
+
+*/
