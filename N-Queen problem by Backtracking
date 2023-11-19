@@ -1,0 +1,120 @@
+/*
+1. Take input to make chessboard size.
+2. Make isSafe function to check col and diagonal.
+3. Make solveQueen function to place queen on safe position.
+4. Display solution and its reflection.
+*/
+#include<iostream>
+using namespace std;
+
+const int N = 10;
+
+void display(int n, int arr[][N])
+{
+	for(int i = 0; i < n; i++)
+	{
+		for(int j = 0; j < n; j++)
+		{
+			cout<<arr[i][j]<<"\t";
+		}
+		cout<<endl;
+	}
+}
+
+void displayReflection(int n, int arr[][N])
+{
+	for(int i = 0; i < n; i++)
+	{
+		for(int j = n - 1; j >= 0; j--)
+		{
+			cout<<arr[i][j]<<"\t";
+		}
+		cout<<endl;
+	}
+}
+
+bool isSafe(int row, int col, int arr[][N], int n)
+{
+	for(int i = 0; i < row; i++)  // Check the column
+	{
+		if(arr[i][col] == 1)
+			return false;
+	}
+	
+	for(int i = row, j = col; i >= 0 && j >= 0; i--, j--)  // Check the left diagonal
+	{
+		if(arr[i][j] == 1)
+			return false;
+	}
+	
+	for(int i = row, j = col; i >= 0 && j < n; i--, j++)  // Check the right diagonal
+	{
+		if(arr[i][j] == 1)
+			return false;
+	}
+	
+	return true;
+}
+
+bool solveQueen(int row, int n, int arr[][N])
+{
+	if(row == n)  // All queens have been placed successfully
+		return true;
+	
+	for(int col = 0; col < n; col++)
+	{
+		if(isSafe(row, col, arr, n))
+		{
+			arr[row][col] = 1; // Place the queen
+			
+			if(solveQueen(row + 1, n, arr)) //recursively calling
+				return true;
+				
+			arr[row][col] = 0;   // If placing the queen at (row, col) doesn't lead to a solution, backtrack
+		}
+	}
+	return false; // if no sol found
+}
+
+int main()
+{
+	int n;
+	cout<<"\nEnter the no. of queens: ";
+	cin>>n;
+	
+	int arr[N][N] = {0}; // Initialize the chessboard with 0s
+	
+	if(solveQueen(0, n, arr))
+	{
+		cout<<"\n*****SOLUTION*****"<<endl;
+		display(n, arr);
+		cout<<"\n*****REFLECTION*****"<<endl;
+		displayReflection(n, arr);
+	}
+	else
+	{
+		cout<<"No solution exists"<<endl;
+	}
+	
+	return 0;
+}
+
+/*
+OUTPUT:
+ubuntu@omkar:~$ g++ daa_pr4.cpp
+ubuntu@omkar:~$ ./a.out 
+
+Enter the no. of queens: 4
+
+*****SOLUTION*****
+0	1	0	0	
+0	0	0	1	
+1	0	0	0	
+0	0	1	0	
+
+*****REFLECTION*****
+0	0	1	0	
+1	0	0	0	
+0	0	0	1	
+0	1	0	0
+*/
